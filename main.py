@@ -55,28 +55,31 @@ login_selector = "LoginUserPassword_auth_username"
 pass_selector  = "LoginUserPassword_auth_password"
 button_selector = "UserCheck_Login_Button_span"
 
+def srmist_autologin():
+    try:
+        driver.get(getUrl())
+        driver.implicitly_wait(3)
+        login_element = driver.find_element(By.ID, login_selector)
+        pass_element = driver.find_element(By.ID, pass_selector)
+        login_element.send_keys(getData("username"))
+        pass_element.send_keys(getData("password"))
+        button = driver.find_element(By.ID, button_selector)
+        button.click()
+        return_code = "0: Logged in"
+        exit_code = 0
+    except RuntimeError:
+        return_code = "1: Not on SRMIST"
+        exit_code = 1
+    except Exception as e:
+        print(e)
+        return_code = "0: Already logged in."
+        exit_code = 0
+    finally:
+        print(return_code)
+        sleep(1)
+        driver.quit()
+        print(f"Took {time()-start:.2f} seconds to complete login.")
+        exit(exit_code)
 
-try:
-    driver.get(getUrl())
-    driver.implicitly_wait(3)
-    login_element = driver.find_element(By.ID, login_selector)
-    pass_element = driver.find_element(By.ID, pass_selector)
-    login_element.send_keys(getData("username"))
-    pass_element.send_keys(getData("password"))
-    button = driver.find_element(By.ID, button_selector)
-    button.click()
-    return_code = "0: Logged in"
-    exit_code = 0
-except RuntimeError:
-    return_code = "1: Not on SRMIST"
-    exit_code = 1
-except Exception as e:
-    print(e)
-    return_code = "0: Already logged in."
-    exit_code = 0
-finally:
-    print(return_code)
-    sleep(1)
-    driver.quit()
-    print(f"Took {time()-start:.2f} seconds to complete login.")
-    exit(exit_code)
+if __name__ == "__main__":
+    srmist_autologin()
