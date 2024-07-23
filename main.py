@@ -1,21 +1,27 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from time import sleep
+from time import sleep, time
 #import dns.resolver #dnspython
 import requests
 import concurrent.futures
 from dotenv import dotenv_values
 
+start = time()
+exit_code = 1
+return_code = "1: Did nothing,"
 
-def getData(data):
+def getData(data:str)->str:
     config = dotenv_values(".env")
-    if data in config:
-        return config[data]
-    raise ValueError("Invalid data")
+    try:
+        if data in config and config[data] != None:
+            return config[data]
+    except:
+        raise ValueError("Invalid key or empty value.")
+        return ''
 
 def fetch_url(url:str)->str:
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=30)
         if response.status_code == 200:
             return url
         else:
@@ -64,11 +70,13 @@ try:
 except RuntimeError:
     return_code = "1: Not on SRMIST"
     exit_code = 1
-except:
+except Exception as e:
+    print(e)
     return_code = "0: Already logged in."
     exit_code = 0
 finally:
     print(return_code)
     sleep(1)
     driver.quit()
+    print(f"Took {time()-start:.2f} seconds to complete login.")
     exit(exit_code)
