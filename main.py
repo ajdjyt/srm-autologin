@@ -6,9 +6,6 @@ import requests
 import concurrent.futures
 from dotenv import dotenv_values
 
-start = time()
-exit_code = 1
-return_code = "1: Did nothing,"
 
 def getData(data:str)->str:
     config = dotenv_values(".env")
@@ -19,6 +16,7 @@ def getData(data:str)->str:
         raise ValueError("Invalid key or empty value.")
         return ''
 
+
 def fetch_url(url:str)->str:
     try:
         response = requests.get(url, timeout=30)
@@ -28,6 +26,7 @@ def fetch_url(url:str)->str:
             return ''
     except requests.RequestException:
         return ''
+
 
 def check_urls(urls:list[str])->str:
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -49,11 +48,6 @@ def getUrl()->str:
     urls = [hostel_url, ub_url]
     return check_urls(urls)
 
-driver = webdriver.Chrome()
-
-login_selector = "LoginUserPassword_auth_username"
-pass_selector  = "LoginUserPassword_auth_password"
-button_selector = "UserCheck_Login_Button_span"
 
 def srmist_autologin():
     try:
@@ -81,5 +75,17 @@ def srmist_autologin():
         print(f"Took {time()-start:.2f} seconds to complete login.")
         exit(exit_code)
 
+
 if __name__ == "__main__":
+
+    start = time()
+    exit_code = 1
+    return_code = "1: Did nothing,"
+
+    driver = webdriver.Chrome()
+
+    login_selector = "LoginUserPassword_auth_username"
+    pass_selector  = "LoginUserPassword_auth_password"
+    button_selector = "UserCheck_Login_Button_span"
+
     srmist_autologin()
